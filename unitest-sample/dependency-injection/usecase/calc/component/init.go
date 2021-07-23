@@ -1,10 +1,10 @@
 package component
 
+//go:generate mockgen -source=init.go -destination=mocks/Client.go -package=mocks . Client
+
 import (
 	rCalcRedis "github.com/verlandz/go-unitest/unitest-sample/dependency-injection/repository/calc/redis"
 )
-
-//go:generate mockgen -source=init.go -destination=mocks/Client.go -package=mocks . Client
 
 type Client interface {
 	DoCalc(n int) (int, error)
