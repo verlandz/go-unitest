@@ -35,9 +35,9 @@ func (Test) TestGetNumberFailWhenRedisIsNil(t *testing.T) (actual int, err error
 
 // TestGetNumberFailWhenRedisIsFail when redis.Get is fail.
 func (Test) TestGetNumberFailWhenRedisIsFail(t *testing.T) (actual int, err error) {
+	mockRedis := pkgRedisMocks.NewMock()
 	mockN := tCalc.GetN()
 	mockKey := fmt.Sprintf(REDIS_GET_NUMBER_KEY, mockN)
-	mockRedis := pkgRedisMocks.NewMock()
 
 	t.Run(tt.Name{
 		Given: "number",
@@ -61,9 +61,9 @@ func (Test) TestGetNumberFailWhenRedisIsFail(t *testing.T) (actual int, err erro
 
 // TestGetNumberSuccess success when everything is ok.
 func (Test) TestGetNumberSuccess(t *testing.T) (actual int, err error) {
+	mockRedis := pkgRedisMocks.NewMock()
 	mockN := tCalc.GetN()
 	mockKey := fmt.Sprintf(REDIS_GET_NUMBER_KEY, mockN)
-	mockRedis := pkgRedisMocks.NewMock()
 
 	t.Run(tt.Name{
 		Given: "number",

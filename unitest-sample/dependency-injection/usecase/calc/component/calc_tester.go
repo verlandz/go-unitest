@@ -14,8 +14,8 @@ type Test struct{}
 
 // TestDoCalcFailWhenGetNumberIsFail fail when calcRedis.GetNumber is fail.
 func (Test) TestDoCalcFailWhenGetNumberIsFail(t *testing.T) (actual int, err error) {
-	mockN := tCalc.GetN()
 	mockCalcRedis := rCalcRedisMocks.NewMockClient(gomock.NewController(t))
+	mockN := tCalc.GetN()
 
 	t.Run(tt.Name{
 		Given: "number",
@@ -39,8 +39,8 @@ func (Test) TestDoCalcFailWhenGetNumberIsFail(t *testing.T) (actual int, err err
 
 // TestDoCalcSuccess success when everything is ok.
 func (Test) TestDoCalcSuccess(t *testing.T) (actual int, err error) {
-	mockN := tCalc.GetN()
 	mockCalcRedis := rCalcRedisMocks.NewMockClient(gomock.NewController(t))
+	mockN := tCalc.GetN()
 
 	t.Run(tt.Name{
 		Given: "number",

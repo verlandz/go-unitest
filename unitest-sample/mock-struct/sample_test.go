@@ -5,7 +5,7 @@ import (
 
 	"github.com/golang/mock/gomock"
 	tt "github.com/verlandz/go-unitest/pkg/tester"
-	mocks "github.com/verlandz/go-unitest/unitest-sample/mock-struct/mocks"
+	personMocks "github.com/verlandz/go-unitest/unitest-sample/mock-struct/person/mocks"
 )
 
 func TestDo(t *testing.T) {
@@ -14,7 +14,7 @@ func TestDo(t *testing.T) {
 		When:  "both data are valid",
 		Then:  "return get name",
 	}.Construct(), func(t *testing.T) {
-		mockPerson := mocks.NewMockPerson(gomock.NewController(t))
+		mockPerson := personMocks.NewMockPerson(gomock.NewController(t))
 		mockName := "John Doe"
 
 		mockPerson.EXPECT().SetName(mockName).Return()

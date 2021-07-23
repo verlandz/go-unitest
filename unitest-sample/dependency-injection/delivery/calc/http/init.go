@@ -7,6 +7,8 @@ import (
 	uCalcComponent "github.com/verlandz/go-unitest/unitest-sample/dependency-injection/usecase/calc/component"
 )
 
+//go:generate mockgen -source=init.go -destination=mocks/Client.go -package=mocks . Client
+
 type Client interface {
 	Calc(w http.ResponseWriter, r *http.Request, params httprouter.Params)
 }

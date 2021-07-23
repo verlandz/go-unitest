@@ -1,13 +1,13 @@
 # GO-UNITEST
 
-Please refer the example right into [unitest-sample](https://github.com/verlandz/go-unitest/tree/main/unitest-sample).
+Example in [unitest-sample](https://github.com/verlandz/go-unitest/tree/main/unitest-sample).
 
 ## Content
 
 | Sample | Desc |
 | ------------- | ------------- |
 | simple | Simple unitest that most of us already know and get used to it. |
-| dependency-injection | Robust unitest that have connection to other layer from result test. It's not merely mock the result, but it will pick the result from dest's test. <br><br> **ex:** if you have changes in `usecase`, you're not only fix the test in `usecase` but also in `delivery` since `delivery` test pick the mock result from `usecase`. |
+| dependency-injection | Robust unitest that have connection to other layer from result test. It's not merely mock the result, but it will pick the result from dest's test. <br><br> **ex:** if you have changes in `usecase`, you're not only fix the test in `usecase`, but also in `delivery` since `delivery` test pick the mock result from `usecase`. |
 | mock-struct | To do some mock, we need interface. Sometimes there's some vendor who only provide struct with the functions. To mock that we need to step back, generate our own interface and store it. |
 
 ## Others Information
