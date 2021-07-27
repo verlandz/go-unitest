@@ -4,11 +4,11 @@ import (
 	person "github.com/verlandz/go-unitest/unitest-sample/mock-struct/person"
 )
 
-// ASSUMING YOUR DIRECTORY IS HERE.
+// ASSUMING YOUR DIRECTORY IS HERE //
 
 // 1. Assuming you have vendor that only have struct and func
 // without interface.
-// 	ex: mock-struct/vendor
+// 	ex: vendor/
 
 // 2. You want to use the vendor and do mock unitest it.
 // since there's no interface provided,
@@ -17,7 +17,7 @@ import (
 //
 // actually you can create by yourself without using generator.
 // if possible, add also cmd in comment for generate mockgen
-// 	//go:generate mockgen -source=Person.go -destination=mocks/Person.go -package=mocks . Person
+// 	//go:generate mockgen -destination=mocks/Person.go -package=mocks . Person
 
 // 3. Mock the interface
 //	execute "//go:generate mockgen ..." from person/Person.go
