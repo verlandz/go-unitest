@@ -2,7 +2,7 @@
 
 package person
 
-//go:generate mockgen -source=Person.go -destination=mocks/Person.go -package=mocks . Person
+//go:generate mockgen -destination=mocks/Person.go -package=mocks . Person
 
 // Person ...
 type Person interface {
