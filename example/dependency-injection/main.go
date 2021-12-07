@@ -3,6 +3,8 @@ package main
 import (
 	"log"
 
+	"net/http"
+
 	"github.com/julienschmidt/httprouter"
 	"gopkg.in/paytm/grace.v1"
 
@@ -11,7 +13,7 @@ import (
 	// usecase
 	uNumComponent "github.com/verlandz/go-unitest/example/dependency-injection/usecase/num/component"
 	// repository
-	rNumGenerate "github.com/verlandz/go-unitest/example/dependency-injection/repository/num/generate"
+	rNumHttp "github.com/verlandz/go-unitest/example/dependency-injection/repository/num/http"
 )
 
 func main() {
@@ -19,12 +21,12 @@ func main() {
 	router := httprouter.New()
 
 	// Repository
-	numGenerate := rNumGenerate.New()
+	numHttpClient := rNumHttp.New(&http.Client{})
 	// Usecase
-	numComponent := uNumComponent.New(numGenerate)
+	numComponentClient := uNumComponent.New(numHttpClient)
 	// Delivery
-	_ = dNumHttp.New(router, numComponent)
+	_ = dNumHttp.New(router, numComponentClient)
 
-	// Http Graceful Serve
+	// Listen
 	log.Fatal(grace.Serve(":8080", router))
 }

@@ -5,28 +5,27 @@ import (
 
 	"github.com/golang/mock/gomock"
 	tt "github.com/verlandz/go-pkg/tester"
-	rNumGenerate "github.com/verlandz/go-unitest/example/dependency-injection/repository/num/generate"
-	rNumGenerateMocks "github.com/verlandz/go-unitest/example/dependency-injection/repository/num/generate/mocks"
+	rNumHttp "github.com/verlandz/go-unitest/example/dependency-injection/repository/num/http"
+	rNumHttpMocks "github.com/verlandz/go-unitest/example/dependency-injection/repository/num/http/mocks"
 	tdNum "github.com/verlandz/go-unitest/example/dependency-injection/test-data/num"
 )
 
-type Test struct{}
+type TestCalcLuckyNumber struct{}
 
-// TestCalcLuckyNumberFailWhenGetNumberIsFail tests func when numGenerate.GetSquareNumber is fail.
-func (Test) TestCalcLuckyNumberFailWhenGetNumberIsFail(t *testing.T) (actual int, err error) {
-	mockNumGenerator := rNumGenerateMocks.NewMockClient(gomock.NewController(t))
-	mockN := tdNum.GetNegativeN()
+func (TestCalcLuckyNumber) FailGetRandNumber(t *testing.T) (actual int, err error) {
+	mockNumHttp := rNumHttpMocks.NewMockClient(gomock.NewController(t))
+	mockN := tdNum.GetNumber()
 
 	t.Run(tt.Name{
 		Given: "number",
-		When:  "numGenerate.GetSquareNumber is fail",
+		When:  "numHttp.GetRandNumber is fail",
 		Then:  "return no data and err",
 	}.Construct(), func(t *testing.T) {
-		mockNumGenerator.EXPECT().
-			GetSquareNumber(-90).
-			Return(rNumGenerate.Test{}.TestGetSquareBadRequest(t))
+		mockNumHttp.EXPECT().
+			GetRandNumber(110).
+			Return(rNumHttp.TestGetRandNumber{}.FailClientNil(t))
 
-		u := New(mockNumGenerator)
+		u := New(mockNumHttp)
 		actual, err = u.CalcLuckyNumber(mockN)
 		expected := 0
 
@@ -37,23 +36,22 @@ func (Test) TestCalcLuckyNumberFailWhenGetNumberIsFail(t *testing.T) (actual int
 	return actual, err
 }
 
-// TestCalcLuckyNumberSuccess tests func when everything is success.
-func (Test) TestCalcLuckyNumberSuccess(t *testing.T) (actual int, err error) {
-	mockNumGenerator := rNumGenerateMocks.NewMockClient(gomock.NewController(t))
-	mockN := tdNum.GetPositiveN()
+func (TestCalcLuckyNumber) Success(t *testing.T) (actual int, err error) {
+	mockNumHttp := rNumHttpMocks.NewMockClient(gomock.NewController(t))
+	mockN := tdNum.GetNumber()
 
 	t.Run(tt.Name{
 		Given: "number",
-		When:  "numGenerate.GetSquareNumber is success",
+		When:  "numHttp.GetRandNumber is success",
 		Then:  "return data and no err",
 	}.Construct(), func(t *testing.T) {
-		mockNumGenerator.EXPECT().
-			GetSquareNumber(110).
-			Return(rNumGenerate.Test{}.TestGetSquareNumberSuccess(t))
+		mockNumHttp.EXPECT().
+			GetRandNumber(110).
+			Return(rNumHttp.TestGetRandNumber{}.Success(t))
 
-		u := New(mockNumGenerator)
+		u := New(mockNumHttp)
 		actual, err = u.CalcLuckyNumber(mockN)
-		expected := 210
+		expected := 121
 
 		tt.Equal(t, expected, actual)
 		tt.NoError(t, err)

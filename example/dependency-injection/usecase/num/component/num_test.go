@@ -4,7 +4,7 @@ import (
 	"testing"
 )
 
-func TestCalcLuckyNumber(t *testing.T) {
-	Test{}.TestCalcLuckyNumberFailWhenGetNumberIsFail(t)
-	Test{}.TestCalcLuckyNumberSuccess(t)
+func Test_CalcLuckyNumber(t *testing.T) {
+	TestCalcLuckyNumber{}.FailGetRandNumber(t)
+	TestCalcLuckyNumber{}.Success(t)
 }

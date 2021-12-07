@@ -15,12 +15,11 @@ import (
 	uNumGenerateMocks "github.com/verlandz/go-unitest/example/dependency-injection/usecase/num/component/mocks"
 )
 
-type Test struct{}
+type TestGetLuckyNumber struct{}
 
-// TestGetLuckyNumberFailWhenCalcLuckyNumberIsFail tests func when numComponent.CalcLuckyNumber is fail.
-func (Test) TestGetLuckyNumberFailWhenCalcLuckyNumberIsFail(t *testing.T) {
+func (TestGetLuckyNumber) FailCalcLuckyNumber(t *testing.T) {
 	mockCalcComponent := uNumGenerateMocks.NewMockClient(gomock.NewController(t))
-	mockN := tdNum.GetNegativeN()
+	mockN := tdNum.GetNumber()
 
 	t.Run(tt.Name{
 		Given: "number",
@@ -28,8 +27,8 @@ func (Test) TestGetLuckyNumberFailWhenCalcLuckyNumberIsFail(t *testing.T) {
 		Then:  "return 500",
 	}.Construct(), func(t *testing.T) {
 		mockCalcComponent.EXPECT().
-			CalcLuckyNumber(-10).
-			Return(uNumGenerate.Test{}.TestCalcLuckyNumberFailWhenGetNumberIsFail(t))
+			CalcLuckyNumber(10).
+			Return(uNumGenerate.TestCalcLuckyNumber{}.FailGetRandNumber(t))
 
 		router := httprouter.New()
 		request, _ := http.NewRequest(http.MethodGet, "/v1/lucky-number", nil)
@@ -41,17 +40,16 @@ func (Test) TestGetLuckyNumberFailWhenCalcLuckyNumberIsFail(t *testing.T) {
 		router.ServeHTTP(response, request)
 
 		expected_code := http.StatusInternalServerError
-		expected_resp := "n should be positive number"
+		expected_resp := "client can't be nil"
 
 		tt.Equal(t, expected_code, response.Code)
 		tt.Equal(t, expected_resp, response.Body.String())
 	})
 }
 
-// TestGetLuckyNumberSuccess tests func when everything is success.
-func (Test) TestGetLuckyNumberSuccess(t *testing.T) {
+func (TestGetLuckyNumber) Success(t *testing.T) {
 	mockCalcComponent := uNumGenerateMocks.NewMockClient(gomock.NewController(t))
-	mockN := tdNum.GetPositiveN()
+	mockN := tdNum.GetNumber()
 
 	t.Run(tt.Name{
 		Given: "number",
@@ -60,7 +58,7 @@ func (Test) TestGetLuckyNumberSuccess(t *testing.T) {
 	}.Construct(), func(t *testing.T) {
 		mockCalcComponent.EXPECT().
 			CalcLuckyNumber(10).
-			Return(uNumGenerate.Test{}.TestCalcLuckyNumberSuccess(t))
+			Return(uNumGenerate.TestCalcLuckyNumber{}.Success(t))
 
 		router := httprouter.New()
 		request, _ := http.NewRequest(http.MethodGet, "/v1/lucky-number", nil)
@@ -72,7 +70,7 @@ func (Test) TestGetLuckyNumberSuccess(t *testing.T) {
 		router.ServeHTTP(response, request)
 
 		expected_code := http.StatusOK
-		expected_resp := "210"
+		expected_resp := "121"
 
 		tt.Equal(t, expected_code, response.Code)
 		tt.Equal(t, expected_resp, response.Body.String())
