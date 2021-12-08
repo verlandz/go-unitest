@@ -24,7 +24,7 @@ func (tc TestGetLuckyNumber) FailCalcLuckyNumber(t *testing.T) *httptest.Respons
 
 	mockCalcComponent.EXPECT().
 		CalcLuckyNumber(tc.CalcLuckyNumber.N).
-		Return(tc.CalcLuckyNumber.FailGetRandNumber(t))
+		Return(tc.CalcLuckyNumber.FailGetTodayNumber(t))
 
 	router := httprouter.New()
 	request, _ := http.NewRequest(http.MethodGet, "/v1/lucky-number", nil)

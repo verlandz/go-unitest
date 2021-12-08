@@ -2,10 +2,11 @@ package main
 
 import (
 	"log"
+	"time"
 
-	"net/http"
-
+	"github.com/go-redis/redis"
 	"github.com/julienschmidt/httprouter"
+	"github.com/verlandz/go-unitest/example/dependency-injection/consts"
 	"gopkg.in/paytm/grace.v1"
 
 	// delivery
@@ -13,17 +14,26 @@ import (
 	// usecase
 	uNumComponent "github.com/verlandz/go-unitest/example/dependency-injection/usecase/num/component"
 	// repository
-	rNumHttp "github.com/verlandz/go-unitest/example/dependency-injection/repository/num/http"
+	rNumRedis "github.com/verlandz/go-unitest/example/dependency-injection/repository/num/redis"
 )
 
 func main() {
 	// HTTP Router
 	router := httprouter.New()
+	// Redis Client
+	redisClient := redis.NewClient(&redis.Options{Addr: "127.0.0.1:6379"})
+	if _, err := redisClient.Ping().Result(); err != nil {
+		panic("please start your redis")
+	} else {
+		// populate random data
+		val := time.Now().UnixNano() % 100
+		redisClient.Set(consts.REDIS_TODAY_NUMBER_KEY, val, 0)
+	}
 
 	// Repository
-	numHttpClient := rNumHttp.New(&http.Client{})
+	numRedisClient := rNumRedis.New(redisClient)
 	// Usecase
-	numComponentClient := uNumComponent.New(numHttpClient)
+	numComponentClient := uNumComponent.New(numRedisClient)
 	// Delivery
 	_ = dNumHttp.New(router, numComponentClient)
 

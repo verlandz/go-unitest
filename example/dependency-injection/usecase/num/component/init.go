@@ -3,7 +3,7 @@ package component
 //go:generate mockgen --build_flags=--mod=mod -destination=mocks/Client.go -package=mocks . Client
 
 import (
-	rNumHttp "github.com/verlandz/go-unitest/example/dependency-injection/repository/num/http"
+	rNumRedis "github.com/verlandz/go-unitest/example/dependency-injection/repository/num/redis"
 )
 
 type Client interface {
@@ -11,11 +11,11 @@ type Client interface {
 }
 
 type usecase struct {
-	numHttp rNumHttp.Client
+	numRedis rNumRedis.Client
 }
 
-func New(numHttp rNumHttp.Client) Client {
+func New(numRedis rNumRedis.Client) Client {
 	return &usecase{
-		numHttp: numHttp,
+		numRedis: numRedis,
 	}
 }

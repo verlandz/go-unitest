@@ -1,18 +1,20 @@
-package http
+package redis
 
-import "net/http"
+import (
+	"github.com/go-redis/redis"
+)
 
 //go:generate mockgen --build_flags=--mod=mod -destination=mocks/Client.go -package=mocks . Client
 
 type Client interface {
-	GetRandNumber(n int) (int, error)
+	GetTodayNumber(n int) (int, error)
 }
 
 type repository struct {
-	client *http.Client
+	client redis.Cmdable
 }
 
-func New(client *http.Client) Client {
+func New(client redis.Cmdable) Client {
 	return &repository{
 		client: client,
 	}

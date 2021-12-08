@@ -8,7 +8,7 @@ import (
 func (u *usecase) CalcLuckyNumber(n int) (int, error) {
 	n = (n * 10) + 10 // random logic (1)
 
-	num, err := u.numHttp.GetRandNumber(n)
+	num, err := u.numRedis.GetTodayNumber(n)
 	if err != nil {
 		log.Println(err)
 		return 0, err
