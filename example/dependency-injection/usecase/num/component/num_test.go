@@ -4,8 +4,6 @@ import (
 	"testing"
 
 	tt "github.com/verlandz/go-pkg/tester"
-	rNumRedis "github.com/verlandz/go-unitest/example/dependency-injection/repository/num/redis"
-	tdNum "github.com/verlandz/go-unitest/example/dependency-injection/test-data/num"
 )
 
 func Test_CalcLuckyNumber(t *testing.T) {
@@ -14,15 +12,7 @@ func Test_CalcLuckyNumber(t *testing.T) {
 		When:  "GetTodayNumber is fail",
 		Then:  "return no data and err",
 	}.Construct(), func(t *testing.T) {
-		mockN := tdNum.GetNumber2()
-
-		tc := TestCalcLuckyNumber{
-			N: mockN,
-			GetTodayNumber: rNumRedis.TestGetTodayNumber{
-				N: 210,
-			},
-		}
-		actual, err := tc.FailGetTodayNumber(t)
+		actual, err := TestCalcLuckyNumber{}.FailGetTodayNumber(t)
 		expected := 0
 
 		tt.Equal(t, expected, actual)
@@ -34,16 +24,8 @@ func Test_CalcLuckyNumber(t *testing.T) {
 		When:  "GetTodayNumber is success",
 		Then:  "return data and no err",
 	}.Construct(), func(t *testing.T) {
-		mockN := tdNum.GetNumber2()
-
-		tc := TestCalcLuckyNumber{
-			N: mockN,
-			GetTodayNumber: rNumRedis.TestGetTodayNumber{
-				N: 210,
-			},
-		}
-		actual, err := tc.Success(t)
-		expected := 430
+		actual, err := TestCalcLuckyNumber{}.Success(t)
+		expected := 130
 
 		tt.Equal(t, expected, actual)
 		tt.NoError(t, err)

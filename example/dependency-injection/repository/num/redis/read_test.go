@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	tt "github.com/verlandz/go-pkg/tester"
-	tdNum "github.com/verlandz/go-unitest/example/dependency-injection/test-data/num"
 )
 
 func Test_GetTodayNumber(t *testing.T) {
@@ -13,10 +12,7 @@ func Test_GetTodayNumber(t *testing.T) {
 		When:  "client is nil",
 		Then:  "return no data and err",
 	}.Construct(), func(t *testing.T) {
-		mockN := tdNum.GetNumber3()
-
-		tc := TestGetTodayNumber{N: mockN}
-		actual, err := tc.FailClientNil(t)
+		actual, err := TestGetTodayNumber{}.FailClientNil(t)
 		expected := 0
 
 		tt.Equal(t, expected, actual)
@@ -28,10 +24,7 @@ func Test_GetTodayNumber(t *testing.T) {
 		When:  "get is fail",
 		Then:  "return no data and err",
 	}.Construct(), func(t *testing.T) {
-		mockN := tdNum.GetNumber3()
-
-		tc := TestGetTodayNumber{N: mockN}
-		actual, err := tc.FailClientGet(t)
+		actual, err := TestGetTodayNumber{}.FailClientGet(t)
 		expected := 0
 
 		tt.Equal(t, expected, actual)
@@ -43,10 +36,7 @@ func Test_GetTodayNumber(t *testing.T) {
 		When:  "the response is bad",
 		Then:  "return no data and err",
 	}.Construct(), func(t *testing.T) {
-		mockN := tdNum.GetNumber3()
-
-		tc := TestGetTodayNumber{N: mockN}
-		actual, err := tc.FaiBadResponse(t)
+		actual, err := TestGetTodayNumber{}.FailBadResponse(t)
 		expected := 0
 
 		tt.Equal(t, expected, actual)
@@ -58,11 +48,8 @@ func Test_GetTodayNumber(t *testing.T) {
 		When:  "all success",
 		Then:  "return data and no err",
 	}.Construct(), func(t *testing.T) {
-		mockN := tdNum.GetNumber3()
-
-		tc := TestGetTodayNumber{N: mockN}
-		actual, err := tc.Success(t)
-		expected := 40
+		actual, err := TestGetTodayNumber{}.Success(t)
+		expected := 20
 
 		tt.Equal(t, expected, actual)
 		tt.NoError(t, err)

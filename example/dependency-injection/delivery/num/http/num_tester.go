@@ -9,27 +9,26 @@ import (
 
 	"github.com/golang/mock/gomock"
 	"github.com/julienschmidt/httprouter"
+	tdNum "github.com/verlandz/go-unitest/example/dependency-injection/test-data/num"
 	uNumComponent "github.com/verlandz/go-unitest/example/dependency-injection/usecase/num/component"
 	uNumComponentMocks "github.com/verlandz/go-unitest/example/dependency-injection/usecase/num/component/mocks"
 )
 
-type TestGetLuckyNumber struct {
-	N               int
-	CalcLuckyNumber uNumComponent.TestCalcLuckyNumber
-}
+type TestGetLuckyNumber struct{}
 
 // FailCalcLuckyNumber fail when CalcLuckyNumber.
-func (tc TestGetLuckyNumber) FailCalcLuckyNumber(t *testing.T) *httptest.ResponseRecorder {
+func (TestGetLuckyNumber) FailCalcLuckyNumber(t *testing.T) *httptest.ResponseRecorder {
 	mockCalcComponent := uNumComponentMocks.NewMockClient(gomock.NewController(t))
+	mockN := tdNum.GetNumber()
 
 	mockCalcComponent.EXPECT().
-		CalcLuckyNumber(tc.CalcLuckyNumber.N).
-		Return(tc.CalcLuckyNumber.FailGetTodayNumber(t))
+		CalcLuckyNumber(mockN).
+		Return(uNumComponent.TestCalcLuckyNumber{}.FailGetTodayNumber(t))
 
 	router := httprouter.New()
 	request, _ := http.NewRequest(http.MethodGet, "/v1/lucky-number", nil)
 	request.Form = make(url.Values)
-	request.Form.Add("n", strconv.Itoa(tc.N))
+	request.Form.Add("n", strconv.Itoa(mockN))
 	response := httptest.NewRecorder()
 
 	New(router, mockCalcComponent)
@@ -38,17 +37,18 @@ func (tc TestGetLuckyNumber) FailCalcLuckyNumber(t *testing.T) *httptest.Respons
 }
 
 // Success when everything is success.
-func (tc TestGetLuckyNumber) Success(t *testing.T) *httptest.ResponseRecorder {
+func (TestGetLuckyNumber) Success(t *testing.T) *httptest.ResponseRecorder {
 	mockCalcComponent := uNumComponentMocks.NewMockClient(gomock.NewController(t))
+	mockN := tdNum.GetNumber()
 
 	mockCalcComponent.EXPECT().
-		CalcLuckyNumber(tc.CalcLuckyNumber.N).
-		Return(tc.CalcLuckyNumber.Success(t))
+		CalcLuckyNumber(mockN).
+		Return(uNumComponent.TestCalcLuckyNumber{}.Success(t))
 
 	router := httprouter.New()
 	request, _ := http.NewRequest(http.MethodGet, "/v1/lucky-number", nil)
 	request.Form = make(url.Values)
-	request.Form.Add("n", strconv.Itoa(tc.N))
+	request.Form.Add("n", strconv.Itoa(mockN))
 	response := httptest.NewRecorder()
 
 	New(router, mockCalcComponent)

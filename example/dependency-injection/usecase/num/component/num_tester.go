@@ -6,33 +6,33 @@ import (
 	"github.com/golang/mock/gomock"
 	rNumRedis "github.com/verlandz/go-unitest/example/dependency-injection/repository/num/redis"
 	rNumRedisMocks "github.com/verlandz/go-unitest/example/dependency-injection/repository/num/redis/mocks"
+	tdNum "github.com/verlandz/go-unitest/example/dependency-injection/test-data/num"
 )
 
-type TestCalcLuckyNumber struct {
-	N              int
-	GetTodayNumber rNumRedis.TestGetTodayNumber
-}
+type TestCalcLuckyNumber struct{}
 
 // FailGetTodayNumber fail when GetTodayNumber.
-func (tc TestCalcLuckyNumber) FailGetTodayNumber(t *testing.T) (actual int, err error) {
-	mockNumHttp := rNumRedisMocks.NewMockClient(gomock.NewController(t))
+func (TestCalcLuckyNumber) FailGetTodayNumber(t *testing.T) (actual int, err error) {
+	mockNumRedis := rNumRedisMocks.NewMockClient(gomock.NewController(t))
+	mockN := tdNum.GetNumber()
 
-	mockNumHttp.EXPECT().
-		GetTodayNumber(tc.GetTodayNumber.N).
-		Return(tc.GetTodayNumber.FailClientNil(t))
+	mockNumRedis.EXPECT().
+		GetTodayNumber(110).
+		Return(rNumRedis.TestGetTodayNumber{}.FailClientNil(t))
 
-	u := New(mockNumHttp)
-	return u.CalcLuckyNumber(tc.N)
+	u := New(mockNumRedis)
+	return u.CalcLuckyNumber(mockN)
 }
 
 // Success when everything is success.
-func (tc TestCalcLuckyNumber) Success(t *testing.T) (actual int, err error) {
-	mockNumHttp := rNumRedisMocks.NewMockClient(gomock.NewController(t))
+func (TestCalcLuckyNumber) Success(t *testing.T) (actual int, err error) {
+	mockNumRedis := rNumRedisMocks.NewMockClient(gomock.NewController(t))
+	mockN := tdNum.GetNumber()
 
-	mockNumHttp.EXPECT().
-		GetTodayNumber(tc.GetTodayNumber.N).
-		Return(tc.GetTodayNumber.Success(t))
+	mockNumRedis.EXPECT().
+		GetTodayNumber(110).
+		Return(rNumRedis.TestGetTodayNumber{}.Success(t))
 
-	u := New(mockNumHttp)
-	return u.CalcLuckyNumber(tc.N)
+	u := New(mockNumRedis)
+	return u.CalcLuckyNumber(mockN)
 }

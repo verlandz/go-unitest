@@ -5,9 +5,6 @@ import (
 	"testing"
 
 	tt "github.com/verlandz/go-pkg/tester"
-	rNumRedis "github.com/verlandz/go-unitest/example/dependency-injection/repository/num/redis"
-	tdNum "github.com/verlandz/go-unitest/example/dependency-injection/test-data/num"
-	uNumComponent "github.com/verlandz/go-unitest/example/dependency-injection/usecase/num/component"
 )
 
 func Test_GetLuckyNumber(t *testing.T) {
@@ -16,18 +13,7 @@ func Test_GetLuckyNumber(t *testing.T) {
 		When:  "CalcLuckyNumber is fail",
 		Then:  "return 500",
 	}.Construct(), func(t *testing.T) {
-		mockN := tdNum.GetNumber1()
-
-		tc := TestGetLuckyNumber{
-			N: mockN,
-			CalcLuckyNumber: uNumComponent.TestCalcLuckyNumber{
-				N: 10,
-				GetTodayNumber: rNumRedis.TestGetTodayNumber{
-					N: 110,
-				},
-			},
-		}
-		actual := tc.FailCalcLuckyNumber(t)
+		actual := TestGetLuckyNumber{}.FailCalcLuckyNumber(t)
 		expected_code := http.StatusInternalServerError
 		expected_resp := "client is nil"
 
@@ -40,20 +26,9 @@ func Test_GetLuckyNumber(t *testing.T) {
 		When:  "CalcLuckyNumber is success",
 		Then:  "return 200",
 	}.Construct(), func(t *testing.T) {
-		mockN := tdNum.GetNumber1()
-
-		tc := TestGetLuckyNumber{
-			N: mockN,
-			CalcLuckyNumber: uNumComponent.TestCalcLuckyNumber{
-				N: 10,
-				GetTodayNumber: rNumRedis.TestGetTodayNumber{
-					N: 110,
-				},
-			},
-		}
-		actual := tc.Success(t)
+		actual := TestGetLuckyNumber{}.Success(t)
 		expected_code := http.StatusOK
-		expected_resp := "230"
+		expected_resp := "130"
 
 		tt.Equal(t, expected_code, actual.Code)
 		tt.Equal(t, expected_resp, actual.Body.String())
