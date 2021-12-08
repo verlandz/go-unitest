@@ -1,11 +1,6 @@
 package num
 
-// GetPositiveN return positive number.
-func GetPositiveN() int {
+// GetNumber return 10.
+func GetNumber() int {
 	return 10
-}
-
-// GetNegativeN return negative number.
-func GetNegativeN() int {
-	return -10
 }

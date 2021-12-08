@@ -3,7 +3,7 @@ package component
 //go:generate mockgen --build_flags=--mod=mod -destination=mocks/Client.go -package=mocks . Client
 
 import (
-	rNumGenerate "github.com/verlandz/go-unitest/example/dependency-injection/repository/num/generate"
+	rNumRedis "github.com/verlandz/go-unitest/example/dependency-injection/repository/num/redis"
 )
 
 type Client interface {
@@ -11,11 +11,11 @@ type Client interface {
 }
 
 type usecase struct {
-	numGenerate rNumGenerate.Client
+	numRedis rNumRedis.Client
 }
 
-func New(numGenerate rNumGenerate.Client) Client {
+func New(numRedis rNumRedis.Client) Client {
 	return &usecase{
-		numGenerate: numGenerate,
+		numRedis: numRedis,
 	}
 }

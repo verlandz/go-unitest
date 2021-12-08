@@ -6,7 +6,7 @@ import (
 	tt "github.com/verlandz/go-pkg/tester"
 )
 
-func TestGetPositiveN(t *testing.T) {
+func TestGetNumber(t *testing.T) {
 	var tcs = []struct {
 		name     string
 		expected int
@@ -15,7 +15,7 @@ func TestGetPositiveN(t *testing.T) {
 			name: tt.Name{
 				Given: "nothing",
 				When:  "data is present",
-				Then:  "return positive number",
+				Then:  "return data",
 			}.Construct(),
 			expected: 10,
 		},
@@ -23,30 +23,7 @@ func TestGetPositiveN(t *testing.T) {
 
 	for _, tc := range tcs {
 		t.Run(tc.name, func(t *testing.T) {
-			actual := GetPositiveN()
-			tt.Equal(t, tc.expected, actual)
-		})
-	}
-}
-
-func TestGetNegativeN(t *testing.T) {
-	var tcs = []struct {
-		name     string
-		expected int
-	}{
-		{
-			name: tt.Name{
-				Given: "nothing",
-				When:  "data is present",
-				Then:  "return negative number",
-			}.Construct(),
-			expected: -10,
-		},
-	}
-
-	for _, tc := range tcs {
-		t.Run(tc.name, func(t *testing.T) {
-			actual := GetNegativeN()
+			actual := GetNumber()
 			tt.Equal(t, tc.expected, actual)
 		})
 	}
