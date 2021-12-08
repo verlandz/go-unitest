@@ -4,58 +4,35 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
-	tt "github.com/verlandz/go-pkg/tester"
 	rNumHttp "github.com/verlandz/go-unitest/example/dependency-injection/repository/num/http"
 	rNumHttpMocks "github.com/verlandz/go-unitest/example/dependency-injection/repository/num/http/mocks"
-	tdNum "github.com/verlandz/go-unitest/example/dependency-injection/test-data/num"
 )
 
-type TestCalcLuckyNumber struct{}
-
-func (TestCalcLuckyNumber) FailGetRandNumber(t *testing.T) (actual int, err error) {
-	mockNumHttp := rNumHttpMocks.NewMockClient(gomock.NewController(t))
-	mockN := tdNum.GetNumber()
-
-	t.Run(tt.Name{
-		Given: "number",
-		When:  "numHttp.GetRandNumber is fail",
-		Then:  "return no data and err",
-	}.Construct(), func(t *testing.T) {
-		mockNumHttp.EXPECT().
-			GetRandNumber(110).
-			Return(rNumHttp.TestGetRandNumber{}.FailClientNil(t))
-
-		u := New(mockNumHttp)
-		actual, err = u.CalcLuckyNumber(mockN)
-		expected := 0
-
-		tt.Equal(t, expected, actual)
-		tt.Error(t, err)
-	})
-
-	return actual, err
+type TestCalcLuckyNumber struct {
+	N             int
+	GetRandNumber rNumHttp.TestGetRandNumber
 }
 
-func (TestCalcLuckyNumber) Success(t *testing.T) (actual int, err error) {
+// FailGetRandNumber fail when GetRandNumber.
+func (tc TestCalcLuckyNumber) FailGetRandNumber(t *testing.T) (actual int, err error) {
 	mockNumHttp := rNumHttpMocks.NewMockClient(gomock.NewController(t))
-	mockN := tdNum.GetNumber()
 
-	t.Run(tt.Name{
-		Given: "number",
-		When:  "numHttp.GetRandNumber is success",
-		Then:  "return data and no err",
-	}.Construct(), func(t *testing.T) {
-		mockNumHttp.EXPECT().
-			GetRandNumber(110).
-			Return(rNumHttp.TestGetRandNumber{}.Success(t))
+	mockNumHttp.EXPECT().
+		GetRandNumber(tc.GetRandNumber.N).
+		Return(tc.GetRandNumber.FailClientNil(t))
 
-		u := New(mockNumHttp)
-		actual, err = u.CalcLuckyNumber(mockN)
-		expected := 121
+	u := New(mockNumHttp)
+	return u.CalcLuckyNumber(tc.N)
+}
 
-		tt.Equal(t, expected, actual)
-		tt.NoError(t, err)
-	})
+// Success when everything is success.
+func (tc TestCalcLuckyNumber) Success(t *testing.T) (actual int, err error) {
+	mockNumHttp := rNumHttpMocks.NewMockClient(gomock.NewController(t))
 
-	return actual, err
+	mockNumHttp.EXPECT().
+		GetRandNumber(tc.GetRandNumber.N).
+		Return(tc.GetRandNumber.SuccessWithData(t))
+
+	u := New(mockNumHttp)
+	return u.CalcLuckyNumber(tc.N)
 }

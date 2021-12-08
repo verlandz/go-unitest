@@ -9,70 +9,49 @@ import (
 
 	"github.com/golang/mock/gomock"
 	"github.com/julienschmidt/httprouter"
-	tt "github.com/verlandz/go-pkg/tester"
-	tdNum "github.com/verlandz/go-unitest/example/dependency-injection/test-data/num"
-	uNumGenerate "github.com/verlandz/go-unitest/example/dependency-injection/usecase/num/component"
-	uNumGenerateMocks "github.com/verlandz/go-unitest/example/dependency-injection/usecase/num/component/mocks"
+	uNumComponent "github.com/verlandz/go-unitest/example/dependency-injection/usecase/num/component"
+	uNumComponentMocks "github.com/verlandz/go-unitest/example/dependency-injection/usecase/num/component/mocks"
 )
 
-type TestGetLuckyNumber struct{}
-
-func (TestGetLuckyNumber) FailCalcLuckyNumber(t *testing.T) {
-	mockCalcComponent := uNumGenerateMocks.NewMockClient(gomock.NewController(t))
-	mockN := tdNum.GetNumber()
-
-	t.Run(tt.Name{
-		Given: "number",
-		When:  "numComponent.CalcLuckyNumber is fail",
-		Then:  "return 500",
-	}.Construct(), func(t *testing.T) {
-		mockCalcComponent.EXPECT().
-			CalcLuckyNumber(10).
-			Return(uNumGenerate.TestCalcLuckyNumber{}.FailGetRandNumber(t))
-
-		router := httprouter.New()
-		request, _ := http.NewRequest(http.MethodGet, "/v1/lucky-number", nil)
-		request.Form = make(url.Values)
-		request.Form.Add("n", strconv.Itoa(mockN))
-		response := httptest.NewRecorder()
-
-		New(router, mockCalcComponent)
-		router.ServeHTTP(response, request)
-
-		expected_code := http.StatusInternalServerError
-		expected_resp := "client can't be nil"
-
-		tt.Equal(t, expected_code, response.Code)
-		tt.Equal(t, expected_resp, response.Body.String())
-	})
+type TestGetLuckyNumber struct {
+	N               int
+	CalcLuckyNumber uNumComponent.TestCalcLuckyNumber
 }
 
-func (TestGetLuckyNumber) Success(t *testing.T) {
-	mockCalcComponent := uNumGenerateMocks.NewMockClient(gomock.NewController(t))
-	mockN := tdNum.GetNumber()
+// FailCalcLuckyNumber fail when CalcLuckyNumber.
+func (tc TestGetLuckyNumber) FailCalcLuckyNumber(t *testing.T) *httptest.ResponseRecorder {
+	mockCalcComponent := uNumComponentMocks.NewMockClient(gomock.NewController(t))
 
-	t.Run(tt.Name{
-		Given: "number",
-		When:  "numComponent.CalcLuckyNumber is success",
-		Then:  "return 200",
-	}.Construct(), func(t *testing.T) {
-		mockCalcComponent.EXPECT().
-			CalcLuckyNumber(10).
-			Return(uNumGenerate.TestCalcLuckyNumber{}.Success(t))
+	mockCalcComponent.EXPECT().
+		CalcLuckyNumber(tc.CalcLuckyNumber.N).
+		Return(tc.CalcLuckyNumber.FailGetRandNumber(t))
 
-		router := httprouter.New()
-		request, _ := http.NewRequest(http.MethodGet, "/v1/lucky-number", nil)
-		request.Form = make(url.Values)
-		request.Form.Add("n", strconv.Itoa(mockN))
-		response := httptest.NewRecorder()
+	router := httprouter.New()
+	request, _ := http.NewRequest(http.MethodGet, "/v1/lucky-number", nil)
+	request.Form = make(url.Values)
+	request.Form.Add("n", strconv.Itoa(tc.N))
+	response := httptest.NewRecorder()
 
-		New(router, mockCalcComponent)
-		router.ServeHTTP(response, request)
+	New(router, mockCalcComponent)
+	router.ServeHTTP(response, request)
+	return response
+}
 
-		expected_code := http.StatusOK
-		expected_resp := "121"
+// Success when everything is success.
+func (tc TestGetLuckyNumber) Success(t *testing.T) *httptest.ResponseRecorder {
+	mockCalcComponent := uNumComponentMocks.NewMockClient(gomock.NewController(t))
 
-		tt.Equal(t, expected_code, response.Code)
-		tt.Equal(t, expected_resp, response.Body.String())
-	})
+	mockCalcComponent.EXPECT().
+		CalcLuckyNumber(tc.CalcLuckyNumber.N).
+		Return(tc.CalcLuckyNumber.Success(t))
+
+	router := httprouter.New()
+	request, _ := http.NewRequest(http.MethodGet, "/v1/lucky-number", nil)
+	request.Form = make(url.Values)
+	request.Form.Add("n", strconv.Itoa(tc.N))
+	response := httptest.NewRecorder()
+
+	New(router, mockCalcComponent)
+	router.ServeHTTP(response, request)
+	return response
 }

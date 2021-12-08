@@ -4,159 +4,80 @@ import (
 	_http "net/http"
 	"net/http/httptest"
 	"testing"
-
-	tt "github.com/verlandz/go-pkg/tester"
-	tdNum "github.com/verlandz/go-unitest/example/dependency-injection/test-data/num"
 )
 
-type TestGetRandNumber struct{}
-
-func (TestGetRandNumber) FailClientNil(t *testing.T) (actual int, err error) {
-	mockN := tdNum.GetNumber()
-
-	t.Run(tt.Name{
-		Given: "number",
-		When:  "client is nil",
-		Then:  "return no data and err",
-	}.Construct(), func(t *testing.T) {
-		r := New(nil)
-		actual, err = r.GetRandNumber(mockN)
-		expected := 0
-
-		tt.Equal(t, expected, actual)
-		tt.Error(t, err)
-	})
-
-	return actual, err
+type TestGetRandNumber struct {
+	N int
 }
 
-func (TestGetRandNumber) FailClientNewRequest(t *testing.T) (actual int, err error) {
-	mockN := tdNum.GetNumber()
-
-	t.Run(tt.Name{
-		Given: "number",
-		When:  "client new request is fail",
-		Then:  "return no data and err",
-	}.Construct(), func(t *testing.T) {
-		defer func(backupURL string) { url = backupURL }(url)
-		url = "://"
-
-		r := New(&_http.Client{})
-		actual, err = r.GetRandNumber(mockN)
-		expected := 0
-
-		tt.Equal(t, expected, actual)
-		tt.Error(t, err)
-	})
-
-	return actual, err
+// FailClientNil fail because client is nil.
+func (tc TestGetRandNumber) FailClientNil(t *testing.T) (actual int, err error) {
+	r := New(nil)
+	return r.GetRandNumber(tc.N)
 }
 
-func (TestGetRandNumber) FailClientDo(t *testing.T) (actual int, err error) {
-	mockN := tdNum.GetNumber()
+// FailClientNewRequest fail to create NewRequest.
+func (tc TestGetRandNumber) FailClientNewRequest(t *testing.T) (actual int, err error) {
+	defer func(backupURL string) { url = backupURL }(url)
+	url = "://"
 
-	t.Run(tt.Name{
-		Given: "number",
-		When:  "client do is fail",
-		Then:  "return no data and err",
-	}.Construct(), func(t *testing.T) {
-		defer func(backupURL string) { url = backupURL }(url)
-		url = ""
-
-		r := New(&_http.Client{})
-		actual, err = r.GetRandNumber(mockN)
-		expected := 0
-
-		tt.Equal(t, expected, actual)
-		tt.Error(t, err)
-	})
-
-	return actual, err
+	r := New(&_http.Client{})
+	return r.GetRandNumber(tc.N)
 }
 
-func (TestGetRandNumber) FailClientUnmarshall(t *testing.T) (actual int, err error) {
-	mockN := tdNum.GetNumber()
+// FailClientDo fail to send http request.
+func (tc TestGetRandNumber) FailClientDo(t *testing.T) (actual int, err error) {
+	defer func(backupURL string) { url = backupURL }(url)
+	url = ""
 
-	t.Run(tt.Name{
-		Given: "number",
-		When:  "fail to unmarshall",
-		Then:  "return no data and err",
-	}.Construct(), func(t *testing.T) {
-		defer func(backupURL string) { url = backupURL }(url)
-
-		mockHttp := httptest.NewServer(_http.HandlerFunc(func(w _http.ResponseWriter, r *_http.Request) {
-			func(writer _http.ResponseWriter, request *_http.Request) {
-				writer.Write([]byte(""))
-			}(w, r)
-		}))
-		defer mockHttp.Close()
-		url = mockHttp.URL
-
-		r := New(&_http.Client{})
-		actual, err = r.GetRandNumber(mockN)
-		expected := 0
-
-		tt.Equal(t, expected, actual)
-		tt.Error(t, err)
-	})
-
-	return actual, err
+	r := New(&_http.Client{})
+	return r.GetRandNumber(tc.N)
 }
 
-func (TestGetRandNumber) FailEmptyData(t *testing.T) (actual int, err error) {
-	mockN := tdNum.GetNumber()
+// FailClientUnmarshall got "" from dependency.
+func (tc TestGetRandNumber) FailClientUnmarshall(t *testing.T) (actual int, err error) {
+	defer func(backupURL string) { url = backupURL }(url)
 
-	t.Run(tt.Name{
-		Given: "number",
-		When:  "resp data length = 0",
-		Then:  "return no data and err",
-	}.Construct(), func(t *testing.T) {
-		defer func(backupURL string) { url = backupURL }(url)
+	mockHttp := httptest.NewServer(_http.HandlerFunc(func(w _http.ResponseWriter, r *_http.Request) {
+		func(writer _http.ResponseWriter, request *_http.Request) {
+			writer.Write([]byte(""))
+		}(w, r)
+	}))
+	defer mockHttp.Close()
+	url = mockHttp.URL
 
-		mockHttp := httptest.NewServer(_http.HandlerFunc(func(w _http.ResponseWriter, r *_http.Request) {
-			func(writer _http.ResponseWriter, request *_http.Request) {
-				writer.Write([]byte("[]"))
-			}(w, r)
-		}))
-		defer mockHttp.Close()
-		url = mockHttp.URL
-
-		r := New(&_http.Client{})
-		actual, err = r.GetRandNumber(mockN)
-		expected := 0
-
-		tt.Equal(t, expected, actual)
-		tt.Error(t, err)
-	})
-
-	return actual, err
+	r := New(&_http.Client{})
+	return r.GetRandNumber(tc.N)
 }
 
-func (TestGetRandNumber) Success(t *testing.T) (actual int, err error) {
-	mockN := tdNum.GetNumber()
+// FailEmptyData got "[]" from dependency.
+func (tc TestGetRandNumber) FailEmptyData(t *testing.T) (actual int, err error) {
+	defer func(backupURL string) { url = backupURL }(url)
 
-	t.Run(tt.Name{
-		Given: "number",
-		When:  "resp data length > 0",
-		Then:  "return data and no err",
-	}.Construct(), func(t *testing.T) {
-		defer func(backupURL string) { url = backupURL }(url)
+	mockHttp := httptest.NewServer(_http.HandlerFunc(func(w _http.ResponseWriter, r *_http.Request) {
+		func(writer _http.ResponseWriter, request *_http.Request) {
+			writer.Write([]byte("[]"))
+		}(w, r)
+	}))
+	defer mockHttp.Close()
+	url = mockHttp.URL
 
-		mockHttp := httptest.NewServer(_http.HandlerFunc(func(w _http.ResponseWriter, r *_http.Request) {
-			func(writer _http.ResponseWriter, request *_http.Request) {
-				writer.Write([]byte("[1,2,3]"))
-			}(w, r)
-		}))
-		defer mockHttp.Close()
-		url = mockHttp.URL
+	r := New(&_http.Client{})
+	return r.GetRandNumber(tc.N)
+}
 
-		r := New(&_http.Client{})
-		actual, err = r.GetRandNumber(mockN)
-		expected := 11
+// SuccessWithData got "[1,2,3]" from dependency.
+func (tc TestGetRandNumber) SuccessWithData(t *testing.T) (actual int, err error) {
+	defer func(backupURL string) { url = backupURL }(url)
 
-		tt.Equal(t, expected, actual)
-		tt.NoError(t, err)
-	})
+	mockHttp := httptest.NewServer(_http.HandlerFunc(func(w _http.ResponseWriter, r *_http.Request) {
+		func(writer _http.ResponseWriter, request *_http.Request) {
+			writer.Write([]byte("[1,2,3]"))
+		}(w, r)
+	}))
+	defer mockHttp.Close()
+	url = mockHttp.URL
 
-	return actual, err
+	r := New(&_http.Client{})
+	return r.GetRandNumber(tc.N)
 }
